@@ -417,7 +417,7 @@
         <li><span class="highlight">3) 릴리즈 부담 감소:</span> CD를 통해 코드가 안전하고 자동화된 절차를 거쳐 배포되므로, 리팩토링 작업의 결과를 빠르게 확인 가능.</li>
     </ul>
 
-    <h2>리팩토링 주요 포인트</h2>
+    <h3>리팩토링 주요 포인트</h3>
     <ul>
         <li><span class="highlight">Extract Method:</span> 중복된 로직 및 복잡한 흐름을 메서드로 분리하여 가독성을 향상.</li>
         <li><span class="highlight">Renaming:</span> 메서드 및 변수명을 명확히 하여 의도를 명확하게 표현.</li>
@@ -434,12 +434,105 @@
         <li><span class="highlight">Replace Conditional with Polymorphism (조건문을 다형성으로 교체):</span> if/else 또는 switch 대신 상속 및 오버라이드로 처리.</li>
     </ul>
 
-    <h2>결론</h2>
+    <h3>결론</h3>
     <p>리팩토링은 단순히 "코드를 바꾸는 것"이 아니라, <span class="highlight">코드 품질을 높이고 협업과 확장을 용이하게</span> 하는 것이 목표입니다. 작업 전에 목표를 명확히 하고, 단위 테스트로 안전성을 확보한 상태에서 적절한 패턴을 선택해 작업하면 효과적인 리팩토링이 가능합니다.</p>
     <p>가독성과 확장성(중복 제거)이 리팩토링의 기본이며, 코드의 구조를 파악하기 쉽게 만들고 협업과 유지보수를 용이하게 합니다.</p>
 
-        
 
+        <h2>과거 작성했던 코드 중 고치고 싶은 부분이 있다면? </h2>
+        <pre>
+
+@PostMapping("/search")
+public ModelAndView searchFoodApi(@ModelAttribute FoodInputDto food)   {
+    ModelAndView modelAndView = new ModelAndView();
+    modelAndView.setViewName("food-search");
+    SearchResponse searchResponse;
+    if(ObjectUtils.isEmpty(food.getFood())) {
+        searchResponse = new SearchResponse();
+    }else{
+        naverSearchServiceImpl.saveFoodKeyword(food.getFood());
+        modelAndView.addObject("foodListWithCnt", naverSearchServiceImpl.foodListWithCount());
+        searchResponse = naverSearchServiceImpl.foodSearch(food.getFood(), food.getSort() ,1);
+    }
+
+    if (searchResponse == null) {
+        log.error("네이버 검색 API 호출 실패");
+        PageHandler pageHandler = new PageHandler(Integer.parseInt(food.getPage()), 10);
+        kakaoSearchServiceImpl.saveFoodKeyword(food.getFood());
+        modelAndView.addObject("foodList", kakaoSearchServiceImpl.foodSearch(food.getFood(), "random", Integer.parseInt(food.getPage())).getDocumentList());
+        modelAndView.addObject("pageHandler", pageHandler);
+        modelAndView.addObject("keyword", food.getFood());
+        modelAndView.addObject("foodListWithCnt", kakaoSearchServiceImpl.foodListWithCount());
+        log.info("카카오 검색 API 호출 성공");
+        return modelAndView;
+    }
+    log.info("검색 API 및 keyword cnt 호출 성공");
+    modelAndView.addObject("foodList", searchResponse.getItems());
+
+    return modelAndView;
+}
+            
+        </pre>
+<p> 1) 일단 캡슐화를 적용하여 리팩토링한다. 그래서 private하게 정리하면 keep it simple. stupid 에 따른 원칙이 적용된다.</p>
+<p> 2) 앞으로 발생될 중복된 코드를 private 하게 뺄 수 있고, public한 부분에서 간결하게 코드 파악할 수 있어서 좋다.</p>
+        <pre>
+
+            @PostMapping("/search")
+public ModelAndView searchFoodApi(@ModelAttribute FoodInputDto food) {
+    ModelAndView modelAndView = createBaseModelAndView();
+    validateInput(food);
+
+    // 네이버 API 호출
+    SearchResponse searchResponse = fetchNaverApiResults(food);
+    if (searchResponse ==) {
+        // 네이버 호출 실패 시 카카오 API 대체
+        return handleKakaoFallback(modelAndView, food);
+    }
+
+    // API 호출 성공 시 결과 전달
+    populateNaverResults(modelAndView, searchResponse, food);
+    return modelAndView;
+}
+
+private ModelAndView createBaseModelAndView() {
+    ModelAndView modelAndView = new ModelAndView();
+    modelAndView.setViewName("food-search");
+    return modelAndView;
+}
+
+private void validateInput(FoodInputDto food) {
+    if (ObjectUtils.isEmpty(food.getFood())) {
+        throw new IllegalArgumentException("검색어가 비어있습니다.");
+    }
+}
+
+private SearchResponse fetchNaverApiResults(FoodInputDto food) {
+    naverSearchServiceImpl.saveFoodKeyword(food.getFood());
+    return naverSearchServiceImpl.foodSearch(food.getFood(), food.getSort(), 1);
+}
+
+private ModelAndView handleKakaoFallback(ModelAndView modelAndView, FoodInputDto food) {
+    log.error("네이버 검색 API 호출 실패");
+    kakaoSearchServiceImpl.saveFoodKeyword(food.getFood());
+    PageHandler pageHandler = new PageHandler(Integer.parseInt(food.getPage()), 10);
+    
+    modelAndView.addObject("foodList", kakaoSearchServiceImpl.foodSearch(
+            food.getFood(), "random", Integer.parseInt(food.getPage())).getDocumentList());
+    modelAndView.addObject("pageHandler", pageHandler);
+    modelAndView.addObject("keyword", food.getFood());
+    modelAndView.addObject("foodListWithCnt", kakaoSearchServiceImpl.foodListWithCount());
+
+    log.info("카카오 검색 API 호출 성공");
+    return modelAndView;
+}
+
+private void populateNaverResults(ModelAndView modelAndView, SearchResponse searchResponse, FoodInputDto food) {
+    modelAndView.addObject("foodList", searchResponse.getItems());
+    modelAndView.addObject("foodListWithCnt", naverSearchServiceImpl.foodListWithCount());
+    log.info("검색 API 및 keyword cnt 호출 성공");
+}
+
+        </pre>
         
     </div>
 </body>
