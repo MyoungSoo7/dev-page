@@ -4,6 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Highlight.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/dark.min.css">
+    <!-- Highlight.js JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+
     <title>리팩토링에서 중요한 것</title>
     <style>
         body {
@@ -441,7 +447,7 @@
 
         <h2>과거 작성했던 코드 중 고치고 싶은 부분이 있다면? </h2>
         <pre>
-
+<code class="language-java">
 @PostMapping("/search")
 public ModelAndView searchFoodApi(@ModelAttribute FoodInputDto food)   {
     ModelAndView modelAndView = new ModelAndView();
@@ -471,12 +477,12 @@ public ModelAndView searchFoodApi(@ModelAttribute FoodInputDto food)   {
 
     return modelAndView;
 }
-            
+         </code>   
         </pre>
 <p> 1) 일단 캡슐화를 적용하여 리팩토링한다. 그래서 private하게 정리하면 keep it simple. stupid 에 따른 원칙이 적용된다.</p>
 <p> 2) 앞으로 발생될 중복된 코드를 private 하게 뺄 수 있고, public한 부분에서 간결하게 코드 파악할 수 있어서 좋다.</p>
         <pre>
-
+<code class="language-java">
             @PostMapping("/search")
 public ModelAndView searchFoodApi(@ModelAttribute FoodInputDto food) {
     ModelAndView modelAndView = createBaseModelAndView();
@@ -531,9 +537,15 @@ private void populateNaverResults(ModelAndView modelAndView, SearchResponse sear
     modelAndView.addObject("foodListWithCnt", naverSearchServiceImpl.foodListWithCount());
     log.info("검색 API 및 keyword cnt 호출 성공");
 }
-
+</code>
         </pre>
         
     </div>
 </body>
+    <script>
+    // Highlight.js 초기화 스크립트
+    document.addEventListener('DOMContentLoaded', (event) => {
+        hljs.highlightAll();
+    });
+</script>
 </html>
