@@ -1,15 +1,107 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <title>두 번째 페이지</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDD와 Testable한 코드</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        ul li::before {
+            content: "✔";
+            color: #3498db;
+            margin-right: 10px;
+        }
+        .image-credit {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+    </style>
 </head>
 <body>
-    <h1>여기는 두 번째 페이지입니다!</h1>
+     <h1>여기는 두 번째 페이지입니다!</h1>
     <p>GitHub Pages에서의 두 번째 페이지를 확인해 보세요.</p>
     <a href="index.html">첫 번째 페이지로 돌아가기</a>
     <a href="third-page.html">세 번째 페이지로 돌아가기</a>
     <a href="fourth-page.html">네 번째 페이지로 돌아가기</a>
     <a href="fifth-page.html">다섯 번째 페이지로 돌아가기</a>
     <a href="sixth-page.html">여섯 번째 페이지로 돌아가기</a>    
+    <h1>TDD가 중요한 이유</h1>
+    <p>
+        <strong>품질 보장:</strong> 테스트가 코드를 작성하기 전에 먼저 준비되므로, 소프트웨어의 품질을 초기 단계부터 체계적으로 관리할 수 있습니다. 
+        기능이 명확히 정의되어 있으며, 테스트를 통과하지 못하면 코드가 완성되지 않습니다.
+    </p>
+    <p>
+        <strong>버그 감소:</strong> 초기 단계에서 테스트를 통해 잠재적 결함을 찾아내므로, 나중에 발생할 수 있는 큰 문제들을 예방할 수 있습니다.
+    </p>
+    <p>
+        <strong>설계 개선:</strong> TDD는 테스트를 기반으로 기능을 설계하기 때문에, 컴포넌트 간의 의존성을 줄이고 
+        모듈화를 촉진하여 더 깔끔하고 유지보수하기 쉬운 코드를 작성할 수 있습니다.
+    </p>
+    <p>
+        <strong>자신감 향상:</strong> 개발자가 모든 코드가 테스트를 통과했음을 알고 있기에, 새로운 기능 추가나 기존 코드 변경 시에도 안정성을 유지할 수 있습니다.
+    </p>
+    <p>
+        <strong>문서화 역할:</strong> 작성된 테스트 케이스는 코드의 동작 방식을 설명하는 문서와 같은 역할을 합니다. 
+        이는 팀원 간의 커뮤니케이션을 향상시키고, 협업을 원활하게 만듭니다.
+    </p>
+    <p>
+        결론적으로, TDD는 단순히 테스트를 작성하는 과정을 넘어, 코드 품질을 보장하면서도 효율적인 개발 흐름을 지원하는 중요한 개발 접근법입니다. 
+        이를 통해 개발자는 더 신뢰할 수 있는 소프트웨어를 구축할 수 있습니다.
+    </p>
+    <p class="image-credit">Photo by Samia Liamani on Unsplash</p>
+
+    <h1>Testable한 코드가 무엇인가?</h1>
+    <h2>Testable한 코드의 특징</h2>
+    <ul>
+        <li><strong>모듈화(Modularity):</strong> 
+            코드가 작은 단위로 나뉘어져 있어 각 단위를 독립적으로 테스트할 수 있어야 합니다. 
+            함수나 클래스가 하나의 명확한 역할만 수행하도록 설계됩니다. 
+            (예: 단일 책임 원칙(Single Responsibility Principle) 준수)
+        </li>
+        <li><strong>외부 의존성 최소화:</strong> 
+            외부 시스템(데이터베이스, API 등)에 직접적으로 의존하지 않고, 대신 의존성을 주입(Dependency Injection)받아 사용할 수 있도록 설계되어야 합니다. 
+            Mock, Stub, Fake 등의 테스트 대체물을 사용하여 외부 의존성을 차단할 수 있어야 합니다.
+        </li>
+        <li><strong>예측 가능성(Predictability):</strong> 
+            함수나 메서드 호출 시 입력 값에 따라 항상 동일한 결과를 반환해야 합니다. 
+            부작용(Side Effect)이 없도록 설계하면 테스트 작성이 용이합니다. (Pure Function 형태가 이상적)
+        </li>
+        <li><strong>캡슐화(Encapsulation):</strong> 
+            내부 구현 세부 사항은 숨기고, 외부에 드러나는 인터페이스(메서드, 함수, API 등)를 테스트할 수 있도록 설계합니다. 
+            구체적인 구현 내용이 변경되더라도 외부 인터페이스가 유지되면 기존 테스트는 계속 유효하게 작동합니다.
+        </li>
+        <li><strong>테스트 격리(Isolation):</strong> 
+            하나의 테스트가 다른 테스트나 시스템 환경에 영향을 주지 않아야 합니다. 
+            독립적인 환경에서 실행될 수 있도록 설계된 코드는 유지보수와 협업에 있어서도 큰 장점을 가집니다.
+        </li>
+    </ul>
+    <p class="image-credit">Photo by Campaign Creators on Unsplash</p>
+
+    <h2>Testable한 코드가 중요한 이유</h2>
+    <ul>
+        <li><strong>신뢰성 향상:</strong> 잘 작성된 테스트는 코드의 안정성을 보장합니다. 
+            Testable 코드가 아닌 경우 테스트 작성이 어렵고, 따라서 코드의 품질 보장이 어려워질 수 있습니다.
+        </li>
+        <li><strong>리팩토링 용이성:</strong> 
+            코드가 테스트 가능하다면 기존의 기능을 방해하지 않고 안전하게 리팩토링할 수 있습니다.
+        </li>
+        <li><strong>디버깅 시간 감소:</strong> 
+            테스트가 쉬운 코드는 문제가 발생했을 때 빠르게 원인을 파악할 수 있습니다.
+        </li>
+        <li><strong>코드 유지보수성 개선:</strong> 
+            Testable한 코드는 설계 자체가 명확하고 모듈화되어 있어, 시간이 지나도 쉽게 수정 및 확장할 수 있습니다.
+        </li>
+    </ul>
 </body>
 </html>
