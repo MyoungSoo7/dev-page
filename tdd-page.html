@@ -61,6 +61,7 @@
             gap: 10px;
         }
         .links a {
+              display: inline-block; /* 버튼처럼 보이게 설정 */
             text-decoration: none;
             background-color: #4CAF50;
             color: #fff;
@@ -68,6 +69,7 @@
             border-radius: 5px;
             font-size: 1em;
             transition: background-color 0.3s ease, transform 0.2s ease;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 살짝 그림자 효과 */
         }
         .links a:hover {
             background-color: #45a049;
@@ -79,9 +81,8 @@
         }
     </style>
 </head>
-<body>
-    
-    <p>TDD 페이지입니다!.</p>
+<body> 
+  
     <a href="index.html">리팩토링 페이지로</a>
     <a href="third-page.html">세 번째 페이지로 돌아가기</a>
     <a href="fourth-page.html">네 번째 페이지로 돌아가기</a>
